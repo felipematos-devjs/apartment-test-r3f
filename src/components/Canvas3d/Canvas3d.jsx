@@ -34,6 +34,7 @@ import {GUI} from 'three/examples/jsm/libs/lil-gui.module.min'
 const globals = {
   toggleHelpers : false,
   envMapIntensity: 0.5,
+  ambientLightIntensity: 2.5,
   autoRotate: false,
   blur: 0.0, 
   presetList: ['none', 'sunset', 'dawn', 'night', 'warehouse', 'forest', 'apartment', 'studio', 'city', 'park', 'lobby'],
@@ -61,6 +62,7 @@ const Canvas3d = () =>{
   const [preset, setPreset] = useState(globals.preset)
   const [cursor, setCursor] = useState('pointer')
   const [fov, setFov] = useState(25)
+  const [ambientLightIntensity, setAmbientLightIntensity] = useState(globals.ambientLightIntensity)
   
   const canvasRef = useRef()
   const modelRef = useRef(null)
@@ -101,7 +103,12 @@ const Canvas3d = () =>{
 
         gui.add(globals, 'envMapIntensity').onChange(()=>{
           updateAllMaterials(modelRef.current)
-        }).min(0).max(10).step(0.001)
+        }).min(0).max(1).step(0.001)
+
+        gui.add(globals, 'ambientLightIntensity').onChange(()=>{
+          updateAllMaterials(modelRef.current)
+          setAmbientLightIntensity(globals.ambientLightIntensity)
+        }).min(0).max(10).step(0.001).name('Light Intensity')
 
         gui.add(globals, 'roughnessMultiplier').onChange(()=>{
           updateAllMaterials(modelRef.current)
@@ -181,7 +188,8 @@ const Canvas3d = () =>{
                     shadow-mapSize-width={2048}
                     shadow-mapSize-height={2048}
                     shadow-normalBias={0.027}
-                    shadow-bias={0.002}
+                    shadow-bias={-0.002}
+                    
                     intensity={1}
                     target-position={[-2,0,0]}
                     matrixWorldNeedsUpdate = {true}
@@ -190,19 +198,24 @@ const Canvas3d = () =>{
                     <Light 
                     helper={helper}
                     ref={light2}
-                    position={[4.1, 10, 3.6]} 
+                    position={[4.1, 4, 3.6]} 
                     color={'#fff'}
                     castShadow={true}
                     shadow-camera-far={30}
                     shadow-camera-near={0.1}
                     shadow-mapSize-width={2048}
                     shadow-mapSize-height={2048}
-                    shadow-normalBias={0.027}
-                    shadow-bias={0.002}
-                    intensity={2}
+                    shadow-normalBias={0.001}
+                    shadow-bias={-0.0005}
+                    intensity={ambientLightIntensity}
                     target-position={[0,4,0]}
                     matrixWorldNeedsUpdate = {true}
                     />
+
+
+
+
+
     
                     <OrbitControls
                     autoRotate={globals.autoRotate}
@@ -259,6 +272,8 @@ const Model = forwardRef((props, ref) => {
       //updateAllMaterials(tv.scene)
       //updateAllMaterials(atari.scene)
       document.body.style.backgroundColor = '#223'
+      updateAllMaterials(apartment.scene)
+
     }, [apartment])
 
     
@@ -270,7 +285,7 @@ const Model = forwardRef((props, ref) => {
         </primitive>
         <motion3d.mesh position={[0,-0.06,0]} initial={{scale: 0}} animate={{scale: [0,1]}} transition={{type: "spring", delay: 1.5}}>
           <Cylinder args={[7,7, 0.1, 128]} receiveShadow>
-              <meshStandardMaterial color={'#aaa'}></meshStandardMaterial>
+              <meshStandardMaterial color={'#ccc'} roughness={1} metalness={0}></meshStandardMaterial>
           </Cylinder> 
         </motion3d.mesh>
       </motion3d.group>
