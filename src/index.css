@@ -1,0 +1,37 @@
+*{
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+
+#pagefooter {
+	bottom: 10px;
+  font-size: 24px;
+
+}
+
+#pagefooter a{
+  color: white;
+  pointer-events: all;
+}
+
+#pagefooter{
+  position: absolute;
+	width: 100%;
+	text-align: center;
+	z-index: 100;
+  
+  font-family: 'Saira', sans-serif;
+  color: white;
+  text-shadow: 2px 2px rgb(0,0,0,0.5);
+  pointer-events: none;
+}
